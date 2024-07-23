@@ -1,0 +1,1335 @@
+[
+  {
+    "task_id": "add_sql_db",
+    "outputs": [
+      {
+        "file_to_change": [
+          {
+            "file_path": "/modules/sql/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_sql_server\" \"sql_server\" {\n  name                         = var.sql_server_name\n  resource_group_name          = var.resource_group_name\n  location                     = var.location\n  version                      = \"12.0\"\n  administrator_login          = var.administrator_login\n  administrator_login_password = var.administrator_login_password\n}\n\nresource \"azurerm_sql_database\" \"sql_database\" {\n  name                = var.sql_database_name\n  resource_group_name = var.resource_group_name\n  location            = var.location\n  server_name         = azurerm_sql_server.sql_server.name\n  sku_name            = \"S1\"\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/sql/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where the SQL resources will be deployed\"\n  type        = string\n}\n\nvariable \"sql_server_name\" {\n  description = \"The name of the SQL Server\"\n  type        = string\n}\n\nvariable \"sql_database_name\" {\n  description = \"The name of the SQL Database\"\n  type        = string\n}\n\nvariable \"administrator_login\" {\n  description = \"The administrator login name for the SQL Server\"\n  type        = string\n}\n\nvariable \"administrator_login_password\" {\n  description = \"The password for the SQL Server administrator login\"\n  type        = string\n  sensitive   = true\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"aks_cluster_name\" {\n  value = module.aks.aks_cluster_name\n}\n\noutput \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}",
+                "changed_snippet": "output \"aks_cluster_name\" {\n  value = module.aks.aks_cluster_name\n}\n\noutput \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}\n\noutput \"sql_database_name\" {\n  value = module.sql.sql_database_name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where resources will be deployed\"\n  type        = string\n}\n\nvariable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where resources will be deployed\"\n  type        = string\n}\n\nvariable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"sql_server_name\" {\n  description = \"The name of the SQL Server\"\n  type        = string\n}\n\nvariable \"sql_database_name\" {\n  description = \"The name of the SQL Database\"\n  type        = string\n}\n\nvariable \"administrator_login\" {\n  description = \"The administrator login name for the SQL Server\"\n  type        = string\n}\n\nvariable \"administrator_login_password\" {\n  description = \"The password for the SQL Server administrator login\"\n  type        = string\n  sensitive   = true\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "provider \"azurerm\" {\n  features {}\n}\n\nresource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n\nmodule \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "provider \"azurerm\" {\n  features {}\n}\n\nresource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n\nmodule \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n\nmodule \"sql\" {\n  source                        = \"./modules/sql\"\n  resource_group_name           = azurerm_resource_group.main.name\n  location                      = azurerm_resource_group.main.location\n  sql_server_name               = var.sql_server_name\n  sql_database_name             = var.sql_database_name\n  administrator_login           = var.administrator_login\n  administrator_login_password  = var.administrator_login_password\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n\nmodule \"sql_database\" {\n  source              = \"./modules/sql_database\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  sql_server_name     = var.sql_server_name\n  database_name       = var.database_name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"sql_server_name\" {\n  description = \"The name of the SQL Server\"\n  type        = string\n}\n\nvariable \"database_name\" {\n  description = \"The name of the SQL Database\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}",
+                "changed_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}\n\noutput \"sql_server_name\" {\n  value = module.sql_database.sql_server_name\n}\n\noutput \"database_name\" {\n  value = module.sql_database.database_name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/sql_database/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_mssql_server\" \"main\" {\n  name                         = var.sql_server_name\n  resource_group_name          = var.resource_group_name\n  location                     = var.location\n  version                      = \"12.0\"\n  administrator_login          = var.administrator_login\n  administrator_login_password = var.administrator_login_password\n\n  sku {\n    name     = \"GP_Gen5_2\"\n    tier     = \"GeneralPurpose\"\n    capacity = 2\n    family   = \"Gen5\"\n  }\n}\n\nresource \"azurerm_mssql_database\" \"main\" {\n  name      = var.database_name\n  server_id = azurerm_mssql_server.main.id\n  sku_name  = \"GP_Gen5_2\"\n}\n\noutput \"sql_server_name\" {\n  value = azurerm_mssql_server.main.name\n}\n\noutput \"database_name\" {\n  value = azurerm_mssql_database.main.name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/sql_database/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where resources will be deployed\"\n  type        = string\n}\n\nvariable \"sql_server_name\" {\n  description = \"The name of the SQL Server\"\n  type        = string\n}\n\nvariable \"database_name\" {\n  description = \"The name of the SQL Database\"\n  type        = string\n}\n\nvariable \"administrator_login\" {\n  description = \"The administrator login for the SQL Server\"\n  type        = string\n}\n\nvariable \"administrator_login_password\" {\n  description = \"The administrator login password for the SQL Server\"\n  type        = string\n  sensitive   = true\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}",
+                "changed_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}\n\noutput \"sql_database_name\" {\n  value = module.sql_database.sql_database_name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "}\n\nmodule \"sql_database\" {\n  source              = \"./modules/sql_database\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  sql_database_name   = var.sql_database_name\n  sql_server_name     = var.sql_server_name\n  admin_username      = var.sql_admin_username\n  admin_password      = var.sql_admin_password\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "}\n\nvariable \"sql_database_name\" {\n  description = \"The name of the SQL Database\"\n  type        = string\n}\n\nvariable \"sql_server_name\" {\n  description = \"The name of the SQL Server\"\n  type        = string\n}\n\nvariable \"sql_admin_username\" {\n  description = \"The admin username for the SQL Server\"\n  type        = string\n}\n\nvariable \"sql_admin_password\" {\n  description = \"The admin password for the SQL Server\"\n  type        = string\n  sensitive   = true\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/sql_database/outputs.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "output \"sql_database_name\" {\n  value = azurerm_sql_database.sql_database.name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/sql_database/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_sql_server\" \"sql_server\" {\n  name                         = var.sql_server_name\n  resource_group_name          = var.resource_group_name\n  location                     = var.location\n  version                      = \"12.0\"\n  administrator_login          = var.admin_username\n  administrator_login_password = var.admin_password\n}\n\nresource \"azurerm_sql_database\" \"sql_database\" {\n  name                = var.sql_database_name\n  resource_group_name = var.resource_group_name\n  location            = var.location\n  server_name         = azurerm_sql_server.sql_server.name\n  sku_name            = \"S1\"\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/sql_database/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where the SQL Database will be deployed\"\n  type        = string\n}\n\nvariable \"sql_database_name\" {\n  description = \"The name of the SQL Database\"\n  type        = string\n}\n\nvariable \"sql_server_name\" {\n  description = \"The name of the SQL Server\"\n  type        = string\n}\n\nvariable \"admin_username\" {\n  description = \"The admin username for the SQL Server\"\n  type        = string\n}\n\nvariable \"admin_password\" {\n  description = \"The admin password for the SQL Server\"\n  type        = string\n  sensitive   = true\n}\n"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "task_id": "blob_storage",
+    "outputs": [
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "module \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n\nmodule \"static_website\" {\n  source              = \"./modules/static-website\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  storage_account_name = var.storage_account_name\n  static_website_index_document = var.static_website_index_document\n  static_website_error_document = var.static_website_error_document\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n\nvariable \"key_vault_name\" {",
+                "changed_snippet": "}\n\nvariable \"storage_account_name\" {\n  description = \"The name of the Storage Account\"\n  type        = string\n}\n\nvariable \"static_website_index_document\" {\n  description = \"The name of the index document for the static website\"\n  type        = string\n}\n\nvariable \"static_website_error_document\" {\n  description = \"The name of the error document for the static website\"\n  type        = string\n}\n\nvariable \"key_vault_name\" {"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/static-website/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_storage_account\" \"static\" {\n  name                     = var.storage_account_name\n  resource_group_name      = var.resource_group_name\n  location                 = var.location\n  account_tier             = \"Standard\"\n  account_replication_type = \"LRS\"\n\n  static_website {\n    index_document = var.static_website_index_document\n    error_404_document = var.static_website_error_document\n  }\n}\n\noutput \"static_website_url\" {\n  value = azurerm_storage_account.static.primary_web_endpoint\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/static-website/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where the Storage Account will be deployed\"\n  type        = string\n}\n\nvariable \"storage_account_name\" {\n  description = \"The name of the Storage Account\"\n  type        = string\n}\n\nvariable \"static_website_index_document\" {\n  description = \"The name of the index document for the static website\"\n  type        = string\n}\n\nvariable \"static_website_error_document\" {\n  description = \"The name of the error document for the static website\"\n  type        = string\n}\n"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n\nresource \"azurerm_storage_account\" \"static_website\" {\n  name                     = var.storage_account_name\n  resource_group_name      = azurerm_resource_group.main.name\n  location                 = azurerm_resource_group.main.location\n  account_tier             = \"Standard\"\n  account_replication_type = \"LRS\"\n\n  static_website {\n    index_document     = \"index.html\"\n    error_404_document = \"error.html\"\n  }\n\n  tags = {\n    purpose = \"static-website\"\n  }\n}\n\nresource \"azurerm_storage_account_blob_container\" \"static_content\" {\n  name                  = \"static-content\"\n  storage_account_name  = azurerm_storage_account.static_website.name\n  container_access_type = \"blob\"\n}\n\nresource \"azurerm_storage_blob\" \"index_html\" {\n  name                   = \"index.html\"\n  storage_account_name   = azurerm_storage_account.static_website.name\n  storage_container_name = azurerm_storage_account_blob_container.static_content.name\n  type                   = \"Block\"\n  source                 = \"./static-content/index.html\"\n  content_type           = \"text/html\"\n}\n\nresource \"azurerm_storage_blob\" \"error_html\" {\n  name                   = \"error.html\"\n  storage_account_name   = azurerm_storage_account.static_website.name\n  storage_container_name = azurerm_storage_account_blob_container.static_content.name\n  type                   = \"Block\"\n  source                 = \"./static-content/error.html\"\n  content_type           = \"text/html\"\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"storage_account_name\" {\n  description = \"The name of the Storage Account\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/README.md",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "# Example terraform repo\n\n## Goal of this repo\n\nThis is an example terraform repo to get started. If you want to test [FirstMate](https://www.firstmate.cloud) capabilities.\n\nFork this repo if you need terraform code to test our reactive mode.\nYou can ask the FirstMate agent to:\n\n- Add autoscaling to the AKS cluster\n- Add a SQL database\n- Create a Github pipeline which uses Checkov to analyse IaC security\n- Update the readme of this repo\n- Any other small or repetitive devops task...\n\n\n## LLM testing for DevOps tasks\n\nWe also use this repo as a submodule in our open-source LLM scoring tasks for devops:\n\nhttps://github.com/firstmatecloud/llm-devops-eval\n",
+                "changed_snippet": "# Example terraform repo\n\n## Goal of this repo\n\nThis is an example terraform repo to get started. If you want to test [FirstMate](https://www.firstmate.cloud) capabilities.\n\nFork this repo if you need terraform code to test our reactive mode.\nYou can ask the FirstMate agent to:\n\n- Add autoscaling to the AKS cluster\n- Add a SQL database\n- Create a Github pipeline which uses Checkov to analyse IaC security\n- Update the readme of this repo\n- Create a static website hosted on Azure Blob Storage\n- Any other small or repetitive devops task...\n\n\n## LLM testing for DevOps tasks\n\nWe also use this repo as a submodule in our open-source LLM scoring tasks for devops:\n\nhttps://github.com/firstmatecloud/llm-devops-eval\n"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "module \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n\nresource \"azurerm_storage_account\" \"static_site\" {\n  name                     = var.storage_account_name\n  resource_group_name      = azurerm_resource_group.main.name\n  location                 = azurerm_resource_group.main.location\n  account_tier             = \"Standard\"\n  account_replication_type = \"LRS\"\n  static_website {\n    index_document = \"index.html\"\n    error_404_document = \"404.html\"\n  }\n}\n\nresource \"azurerm_storage_blob\" \"index\" {\n  name                   = \"index.html\"\n  storage_account_name   = azurerm_storage_account.static_site.name\n  storage_container_name = \"$web\"\n  type                   = \"block\"\n  source                 = \"${path.module}/www/index.html\"\n  content_type           = \"text/html\"\n}\n\nresource \"azurerm_storage_blob\" \"error\" {\n  name                   = \"404.html\"\n  storage_account_name   = azurerm_storage_account.static_site.name\n  storage_container_name = \"$web\"\n  type                   = \"block\"\n  source                 = \"${path.module}/www/404.html\"\n  content_type           = \"text/html\"\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"storage_account_name\" {\n  description = \"The name of the Storage Account\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}",
+                "changed_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}\n\noutput \"static_website_url\" {\n  value = azurerm_storage_account.static_site.primary_web_endpoint\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/README.md",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "\n## LLM testing for DevOps tasks\n",
+                "changed_snippet": "\n## How to Use\n\nTo deploy the static website, ensure you define the `storage_account_name` variable in your Terraform configuration.\n\nExample:\n\n```\nterraform apply -var 'storage_account_name=youruniquename'\n```\n\n## LLM testing for DevOps tasks\n"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "task_id": "log_analytics",
+    "outputs": [
+      {
+        "file_to_change": [
+          {
+            "file_path": "/modules/aks/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"location\" {\n  description = \"The Azure location where the AKS cluster will be deployed\"\n  type        = string\n}\n\nvariable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}",
+                "changed_snippet": "variable \"location\" {\n  description = \"The Azure location where the AKS cluster will be deployed\"\n  type        = string\n}\n\nvariable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"log_analytics_workspace_id\" {\n  description = \"The ID of the Log Analytics Workspace that will be used for monitoring\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "  addon_profile {\n    oms_agent {\n      enabled                    = true\n      log_analytics_workspace_id = var.log_analytics_workspace_id\n    }\n  }\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n\nmodule \"keyvault\" {\n",
+                "changed_snippet": "}\n\nresource \"azurerm_log_analytics_workspace\" \"main\" {\n  name                = \"example-law\"\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  sku                 = \"PerGB2018\"\n  retention_in_days   = 30\n}\n\nmodule \"keyvault\" {\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n\nvariable \"key_vault_name\" {\n",
+                "changed_snippet": "}\n\nvariable \"log_analytics_workspace_id\" {\n  description = \"The ID of the Log Analytics Workspace\"\n  type        = string\n}\n\nvariable \"key_vault_name\" {\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "}\n\noutput \"log_analytics_workspace_id\" {\n  value = azurerm_log_analytics_workspace.main.id\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "resource \"azurerm_kubernetes_cluster\" \"aks\" {\n  name                = var.aks_cluster_name\n  location            = var.location\n  resource_group_name = var.resource_group_name\n  dns_prefix          = var.aks_cluster_name",
+                "changed_snippet": "resource \"azurerm_kubernetes_cluster\" \"aks\" {\n  name                = var.aks_cluster_name\n  location            = var.location\n  resource_group_name = var.resource_group_name\n  dns_prefix          = var.aks_cluster_name\n\n  addon_profile {\n    oms_agent {\n      enabled                    = true\n      log_analytics_workspace_id = var.log_analytics_workspace_id\n    }\n  }"
+              }
+            ]
+          },
+          {
+            "file_path": "modules/aks/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}",
+                "changed_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"log_analytics_workspace_id\" {\n  description = \"The ID of the Log Analytics Workspace\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name",
+                "changed_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n  log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n",
+                "changed_snippet": "module \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n\nresource \"azurerm_log_analytics_workspace\" \"main\" {\n  name                = \"${var.aks_cluster_name}-log-analytics\"\n  location            = var.location\n  resource_group_name = var.resource_group_name\n  sku                 = \"PerGB2018\"\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}",
+                "changed_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n  log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id\n}\n\nresource \"azurerm_log_analytics_workspace\" \"main\" {\n  name                = var.log_analytics_workspace_name\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  sku                 = \"PerGB2018\"\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"log_analytics_workspace_name\" {\n  description = \"The name of the Log Analytics Workspace\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n\n  identity {\n    type = \"SystemAssigned\"\n",
+                "changed_snippet": "\n  addon_profile {\n    oms_agent {\n      enabled                    = true\n      log_analytics_workspace_id = var.log_analytics_workspace_id\n    }\n  }\n  identity {\n    type = \"SystemAssigned\"\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}",
+                "changed_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"log_analytics_workspace_id\" {\n  description = \"The ID of the Log Analytics Workspace\"\n  type        = string\n}"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "task_id": "autoscaling",
+    "outputs": [
+      {
+        "file_to_change": [
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "default_node_pool {\n    name       = \"default\"\n    node_count = 1\n    vm_size    = \"Standard_DS2_v2\"\n  }",
+                "changed_snippet": "default_node_pool {\n    name       = \"default\"\n    min_count  = 1\n    max_count  = 3\n    enable_auto_scaling = true\n    vm_size    = \"Standard_DS2_v2\"\n  }"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "default_node_pool {\n    name       = \"default\"\n    node_count = 1\n    vm_size    = \"Standard_DS2_v2\"\n  }",
+                "changed_snippet": "default_node_pool {\n    name       = \"default\"\n    vm_size    = \"Standard_DS2_v2\"\n    enable_auto_scaling = true\n    min_count = 1\n    max_count = 3\n  }"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/modules/aks/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}",
+                "changed_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"min_node_count\" {\n  description = \"The minimum number of nodes in the AKS cluster\"\n  type        = number\n  default     = 1\n}\n\nvariable \"max_node_count\" {\n  description = \"The maximum number of nodes in the AKS cluster\"\n  type        = number\n  default     = 3\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "  }\n",
+                "changed_snippet": "    enable_auto_scaling = true\n    min_count           = var.min_node_count\n    max_count           = var.max_node_count\n  }\n"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "task_id": "create_submodule",
+    "outputs": [
+      {
+        "file_to_change": [
+          {
+            "file_path": "/modules/resource_group/outputs.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "output \"resource_group_name\" {\n  value = azurerm_resource_group.main.name\n}\n\noutput \"resource_group_location\" {\n  value = azurerm_resource_group.main.location\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/resource_group/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/resource_group/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where resources will be deployed\"\n  type        = string\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "resource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}",
+                "changed_snippet": "\nmodule \"resource_group\" {\n  source              = \"./modules/resource_group\"\n  resource_group_name = var.resource_group_name\n  location            = var.location\n}\n"
+              },
+              {
+                "original_snippet": "resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location",
+                "changed_snippet": "resource_group_name = module.resource_group.resource_group_name\n  location            = module.resource_group.resource_group_location"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "resource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}",
+                "changed_snippet": ""
+              },
+              {
+                "original_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "module \"resource_group\" {\n  source = \"./modules/resource_group\"\n  resource_group_name = var.resource_group_name\n  location = var.location\n}\n\nmodule \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = module.resource_group.resource_group_name\n  location            = module.resource_group.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = module.resource_group.resource_group_name\n  location            = module.resource_group.location\n  key_vault_name      = var.key_vault_name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/resource_group/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n\noutput \"resource_group_name\" {\n  value = azurerm_resource_group.main.name\n}\n\noutput \"location\" {\n  value = azurerm_resource_group.main.location\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/resource_group/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where resources will be deployed\"\n  type        = string\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "resource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n\nmodule \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n",
+                "changed_snippet": "module \"resource_group\" {\n  source = \"./modules/resource_group\"\n  resource_group_name = var.resource_group_name\n  location = var.location\n}\n\nmodule \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = module.resource_group.resource_group_name\n  location            = module.resource_group.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = module.resource_group.resource_group_name\n  location            = module.resource_group.location\n  key_vault_name      = var.key_vault_name\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/resource_group/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n\noutput \"resource_group_name\" {\n  value = azurerm_resource_group.main.name\n}\n\noutput \"location\" {\n  value = azurerm_resource_group.main.location\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/resource_group/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where resources will be deployed\"\n  type        = string\n}\n"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "task_id": "virtual_network",
+    "outputs": [
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n",
+                "changed_snippet": "resource \"azurerm_virtual_network\" \"main\" {\n  name                = \"mainVnet\"\n  address_space       = [\"10.0.0.0/16\"]\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n}\n\nresource \"azurerm_subnet\" \"aks_subnet\" {\n  name                 = \"aksSubnet\"\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.1.0/24\"]\n}\n\nresource \"azurerm_subnet\" \"keyvault_subnet\" {\n  name                 = \"keyvaultSubnet\"\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.2.0/24\"]\n}\n\nresource \"azurerm_subnet\" \"sql_subnet\" {\n  name                 = \"sqlSubnet\"\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.3.0/24\"]\n}\n\nmodule \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n  subnet_id           = azurerm_subnet.aks_subnet.id\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n  subnet_id           = azurerm_subnet.keyvault_subnet.id\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"vnet_name\" {\n  description = \"The name of the virtual network\"\n  type        = string\n}\n\nvariable \"vnet_address_space\" {\n  description = \"The address space of the virtual network\"\n  type        = list(string)\n  default     = [\"10.0.0.0/16\"]\n}\n\nvariable \"aks_subnet_name\" {\n  description = \"The name of the AKS subnet\"\n  type        = string\n  default     = \"aksSubnet\"\n}\n\nvariable \"aks_subnet_prefix\" {\n  description = \"The address prefix of the AKS subnet\"\n  type        = string\n  default     = \"10.0.1.0/24\"\n}\n\nvariable \"keyvault_subnet_name\" {\n  description = \"The name of the Key Vault subnet\"\n  type        = string\n  default     = \"keyvaultSubnet\"\n}\n\nvariable \"keyvault_subnet_prefix\" {\n  description = \"The address prefix of the Key Vault subnet\"\n  type        = string\n  default     = \"10.0.2.0/24\"\n}\n\nvariable \"sql_subnet_name\" {\n  description = \"The name of the SQL subnet\"\n  type        = string\n  default     = \"sqlSubnet\"\n}\n\nvariable \"sql_subnet_prefix\" {\n  description = \"The address prefix of the SQL subnet\"\n  type        = string\n  default     = \"10.0.3.0/24\"\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/keyvault/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"subnet_id\" {\n  description = \"The ID of the subnet where the Key Vault will be deployed\"\n  type        = string\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/keyvault/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "  network_acls {\n    bypass = \"AzureServices\"\n    default_action = \"Deny\"\n\n    virtual_network_subnet_ids = [var.subnet_id]\n  }\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n",
+                "changed_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"subnet_id\" {\n  description = \"The ID of the subnet where the AKS cluster will be deployed\"\n  type        = string\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "  network_profile {\n    network_plugin = \"azure\"\n    subnet_id      = var.subnet_id\n  }\n}\n"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}",
+                "changed_snippet": "}\n\nvariable \"vnet_name\" {\n  description = \"The name of the virtual network\"\n  type        = string\n}\n\nvariable \"vnet_address_space\" {\n  description = \"The address space of the virtual network\"\n  type        = string\n}\n\nvariable \"subnet_aks\" {\n  description = \"The subnet for the AKS cluster\"\n  type        = string\n}\n\nvariable \"subnet_keyvault\" {\n  description = \"The subnet for the Key Vault\"\n  type        = string\n}\n\nvariable \"subnet_sql\" {\n  description = \"The subnet for the SQL Database\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"aks\" {",
+                "changed_snippet": "resource \"azurerm_virtual_network\" \"main\" {\n  name                = var.vnet_name\n  address_space       = [var.vnet_address_space]\n  location            = var.location\n  resource_group_name = azurerm_resource_group.main.name\n}\n\nresource \"azurerm_subnet\" \"aks\" {\n  name                 = var.subnet_aks\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.1.0/24\"]\n}\n\nresource \"azurerm_subnet\" \"keyvault\" {\n  name                 = var.subnet_keyvault\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.2.0/24\"]\n}\n\nresource \"azurerm_subnet\" \"sql\" {\n  name                 = var.subnet_sql\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.main.name\n  address_prefixes     = [\"10.0.3.0/24\"]\n}\n\nmodule \"aks\" {"
+              },
+              {
+                "original_snippet": "}",
+                "changed_snippet": "  subnet_id          = azurerm_subnet.aks.id\n}"
+              },
+              {
+                "original_snippet": "}",
+                "changed_snippet": "  subnet_id          = azurerm_subnet.keyvault.id\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}",
+                "changed_snippet": "}\n\nvariable \"subnet_id\" {\n  description = \"The ID of the subnet for the AKS cluster\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n\n  network_profile {",
+                "changed_snippet": "  }\n\n  network_profile {\n    network_plugin = \"azure\"\n    subnet_id      = var.subnet_id"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/keyvault/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}",
+                "changed_snippet": "}\n\nvariable \"subnet_id\" {\n  description = \"The ID of the subnet for the Key Vault\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/keyvault/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}",
+                "changed_snippet": "  network_acls {\n    default_action = \"Deny\"\n    bypass         = \"AzureServices\"\n\n    virtual_network_subnet_ids = [var.subnet_id]\n  }\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "provider \"azurerm\" {\n  features {}\n}\n\nresource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n\nmodule \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "provider \"azurerm\" {\n  features {}\n}\n\nresource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n\nresource \"azurerm_virtual_network\" \"vnet\" {\n  name                = var.vnet_name\n  address_space       = [var.vnet_address_space]\n  location            = var.location\n  resource_group_name = azurerm_resource_group.main.name\n}\n\nresource \"azurerm_subnet\" \"aks_subnet\" {\n  name                 = var.aks_subnet_name\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.vnet.name\n  address_prefixes     = [var.aks_subnet_prefix]\n}\n\nresource \"azurerm_subnet\" \"keyvault_subnet\" {\n  name                 = var.keyvault_subnet_name\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.vnet.name\n  address_prefixes     = [var.keyvault_subnet_prefix]\n}\n\nresource \"azurerm_subnet\" \"sql_subnet\" {\n  name                 = var.sql_subnet_name\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.vnet.name\n  address_prefixes     = [var.sql_subnet_prefix]\n}\n\nmodule \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n  subnet_id           = azurerm_subnet.aks_subnet.id\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n  subnet_id           = azurerm_subnet.keyvault_subnet.id\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"vnet_name\" {\n  description = \"The name of the Virtual Network\"\n  type        = string\n}\n\nvariable \"vnet_address_space\" {\n  description = \"The address space of the Virtual Network\"\n  type        = string\n}\n\nvariable \"aks_subnet_name\" {\n  description = \"The name of the AKS subnet\"\n  type        = string\n}\n\nvariable \"aks_subnet_prefix\" {\n  description = \"The address prefix of the AKS subnet\"\n  type        = string\n}\n\nvariable \"keyvault_subnet_name\" {\n  description = \"The name of the Key Vault subnet\"\n  type        = string\n}\n\nvariable \"keyvault_subnet_prefix\" {\n  description = \"The address prefix of the Key Vault subnet\"\n  type        = string\n}\n\nvariable \"sql_subnet_name\" {\n  description = \"The name of the SQL Database subnet\"\n  type        = string\n}\n\nvariable \"sql_subnet_prefix\" {\n  description = \"The address prefix of the SQL Database subnet\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}",
+                "changed_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"subnet_id\" {\n  description = \"The ID of the subnet\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "  }\n\n  identity {\n    type = \"SystemAssigned\"\n  }\n\n  network_profile {\n    network_plugin = \"azure\"\n  }\n}",
+                "changed_snippet": "    vnet_subnet_id = var.subnet_id\n  }\n\n  identity {\n    type = \"SystemAssigned\"\n  }\n\n  network_profile {\n    network_plugin = \"azure\"\n  }\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/keyvault/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "}\n\nvariable \"subnet_id\" {\n  description = \"The ID of the subnet\"\n  type        = string\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/keyvault/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "  virtual_network_subnet_id = var.subnet_id\n}\n"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "task_id": "azure_application_gw",
+    "outputs": [
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "module \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n\nmodule \"application_gateway\" {\n  source              = \"./modules/application_gateway\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_subnet_id       = module.aks.aks_subnet_id # Reference to the aks subnet id output\n  aks_cluster_name    = azurerm_kubernetes_cluster.aks.name # Reference to the AKS cluster name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"application_gateway_name\" {\n  description = \"The name of the Application Gateway\"\n  type        = string\n}\n\nvariable \"application_gateway_capacity\" {\n  description = \"The capacity of the Application Gateway\"\n  type        = number\n  default     = 2\n}\n\nvariable \"application_gateway_sku\" {\n  description = \"The SKU of the Application Gateway\"\n  type        = string\n  default     = \"Standard_v2\"\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"aks_cluster_name\" {\n  value = azurerm_kubernetes_cluster.aks.name\n}",
+                "changed_snippet": "output \"aks_cluster_name\" {\n  value = azurerm_kubernetes_cluster.aks.name\n}\n\noutput \"aks_subnet_id\" {\n  value = azurerm_subnet.aks_subnet.id\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "  }\n\n  identity {\n    type = \"SystemAssigned\"\n  }\n\n  network_profile {\n    network_plugin = \"azure\"\n  }\n}",
+                "changed_snippet": "  }\n\n  identity {\n    type = \"SystemAssigned\"\n  }\n\n  network_profile {\n    network_plugin    = \"azure\"\n    load_balancer_sku = \"Standard\"\n    outbound_type     = \"loadBalancer\"\n  }\n}\n\nresource \"azurerm_virtual_network\" \"aks_vnet\" {\n  name                = \"aks-vnet\"\n  address_space       = [\"10.0.0.0/8\"]\n  location            = var.location\n  resource_group_name = var.resource_group_name\n}\n\nresource \"azurerm_subnet\" \"aks_subnet\" {\n  name                 = \"aks-subnet\"\n  resource_group_name  = var.resource_group_name\n  virtual_network_name = azurerm_virtual_network.aks_vnet.name\n  address_prefixes     = [\"10.240.0.0/16\"]\n}\n\nresource \"azurerm_subnet\" \"appgw_subnet\" {\n  name                 = \"appgw-subnet\"\n  resource_group_name  = var.resource_group_name\n  virtual_network_name = azurerm_virtual_network.aks_vnet.name\n  address_prefixes     = [\"10.241.0.0/16\"]\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}",
+                "changed_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"appgw_name\" {\n  description = \"The name of the Application Gateway\"\n  type        = string\n  default     = \"appgw\"\n}\n\nvariable \"appgw_capacity\" {\n  description = \"The capacity of the Application Gateway\"\n  type        = number\n  default     = 2\n}\n\nvariable \"appgw_sku\" {\n  description = \"The SKU of the Application Gateway\"\n  type        = string\n  default     = \"Standard_v2\"\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/application_gateway/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where the Application Gateway will be deployed\"\n  type        = string\n}\n\nvariable \"aks_subnet_id\" {\n  description = \"The ID of the AKS subnet\"\n  type        = string\n}\n\nvariable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"application_gateway_name\" {\n  description = \"The name of the Application Gateway\"\n  type        = string\n}\n\nvariable \"application_gateway_capacity\" {\n  description = \"The capacity of the Application Gateway\"\n  type        = number\n}\n\nvariable \"application_gateway_sku\" {\n  description = \"The SKU of the Application Gateway\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/application_gateway/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_application_gateway\" \"appgw\" {\n  name                = var.application_gateway_name\n  location            = var.location\n  resource_group_name = var.resource_group_name\n\n  sku {\n    name     = var.application_gateway_sku\n    tier     = \"Standard_v2\"\n    capacity = var.application_gateway_capacity\n  }\n\n  gateway_ip_configuration {\n    name      = \"appgw-ipcfg\"\n    subnet_id = var.aks_subnet_id\n  }\n\n  frontend_ip_configuration {\n    name                 = \"appgw-frontends\"\n    public_ip_address_id = azurerm_public_ip.appgw_pip.id\n  }\n\n  frontend_port {\n    name = \"appgw-http\"\n    port = 80\n  }\n\n  http_settings {\n    name                  = \"appgw-http-settings\"\n    cookie_based_affinity = \"Disabled\"\n    port                  = 80\n    protocol              = \"Http\"\n  }\n\n  backend_address_pool {\n    name = \"appgw-backend-pool\"\n  }\n\n  backend_http_settings {\n    name                  = \"appgw-backend-http-settings\"\n    cookie_based_affinity = \"Disabled\"\n    port                  = 80\n    protocol              = \"Http\"\n  }\n\n  http_listener {\n    name                           = \"appgw-http-listener\"\n    frontend_ip_configuration_name = \"appgw-frontends\"\n    frontend_port_name             = \"appgw-http\"\n    protocol                       = \"Http\"\n  }\n\n  request_routing_rule {\n    name                       = \"appgw-routing-rule\"\n    rule_type                  = \"Basic\"\n    http_listener_name         = \"appgw-http-listener\"\n    backend_address_pool_name  = \"appgw-backend-pool\"\n    backend_http_settings_name = \"appgw-backend-http-settings\"\n  }\n}\n\nresource \"azurerm_public_ip\" \"appgw_pip\" {\n  name                = \"example-pip\"\n  location            = var.location\n  resource_group_name = var.resource_group_name\n  allocation_method   = \"Static\"\n  sku                 = \"Standard\"\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/application_gateway/outputs.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "output \"application_gateway_id\" {\n  value = azurerm_application_gateway.appgw.id\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}",
+                "changed_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"application_gateway\" {\n  source              = \"./modules/application-gateway\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  backend_address_pool_name = var.backend_address_pool_name\n  frontend_port_name  = var.frontend_port_name\n  gateway_name        = var.gateway_name\n  sku                 = var.sku\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"backend_address_pool_name\" {\n  description = \"The name of the backend address pool\"\n  type        = string\n}\n\nvariable \"frontend_port_name\" {\n  description = \"The name of the frontend port\"\n  type        = string\n}\n\nvariable \"gateway_name\" {\n  description = \"The name of the Application Gateway\"\n  type        = string\n}\n\nvariable \"sku\" {\n  description = \"The SKU for the Application Gateway\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/application-gateway/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_application_gateway\" \"app_gateway\" {\n  name                = var.gateway_name\n  location            = var.location\n  resource_group_name = var.resource_group_name\n\n  sku {\n    name     = var.sku\n    tier     = \"Standard_v2\"\n    capacity = 2\n  }\n\n  gateway_ip_configuration {\n    name      = \"my-gateway-ip-configuration\"\n    subnet_id = azurerm_subnet.example.id\n  }\n\n  frontend_port {\n    name = var.frontend_port_name\n    port = 80\n  }\n\n  frontend_ip_configuration {\n    name                 = \"my-frontend-ip-configuration\"\n    public_ip_address_id = azurerm_public_ip.example.id\n  }\n\n  backend_address_pool {\n    name = var.backend_address_pool_name\n  }\n\n  http_listener {\n    name                           = \"my-http-listener\"\n    frontend_ip_configuration_name = \"my-frontend-ip-configuration\"\n    frontend_port_name             = var.frontend_port_name\n    backend_address_pool_name      = var.backend_address_pool_name\n    protocol                       = \"Http\"\n  }\n\n  backend_http_settings {\n    name                  = \"my-backend-http-settings\"\n    cookie_based_affinity = \"Disabled\"\n    port                  = 80\n    protocol              = \"Http\"\n  }\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/application-gateway/outputs.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "output \"application_gateway_name\" {\n  value = azurerm_application_gateway.app_gateway.name\n}\n\noutput \"application_gateway_id\" {\n  value = azurerm_application_gateway.app_gateway.id\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/application-gateway/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where the Application Gateway will be deployed\"\n  type        = string\n}\n\nvariable \"gateway_name\" {\n  description = \"The name of the Application Gateway\"\n  type        = string\n}\n\nvariable \"sku\" {\n  description = \"The SKU of the Application Gateway\"\n  type        = string\n}\n\nvariable \"frontend_port_name\" {\n  description = \"The name of the frontend port\"\n  type        = string\n}\n\nvariable \"backend_address_pool_name\" {\n  description = \"The name of the backend address pool\"\n  type        = string\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"aks_cluster_name\" {\n  value = module.aks.aks_cluster_name\n}\n\noutput \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}",
+                "changed_snippet": "output \"aks_cluster_name\" {\n  value = module.aks.aks_cluster_name\n}\n\noutput \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}\n\noutput \"application_gateway_id\" {\n  value = module.application_gateway.id\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "provider \"azurerm\" {\n  features {}\n}\n\nresource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n\nmodule \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "provider \"azurerm\" {\n  features {}\n}\n\nresource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n\nmodule \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n\nmodule \"application_gateway\" {\n  source              = \"./modules/application_gateway\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  backend_address_pool = module.aks.aks_cluster_name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"application_gateway_name\" {\n  description = \"The name of the Application Gateway\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"aks_cluster_name\" {\n  value = azurerm_kubernetes_cluster.aks.name\n}",
+                "changed_snippet": "output \"aks_cluster_name\" {\n  value = azurerm_kubernetes_cluster.aks.name\n}\n\noutput \"aks_kubeconfig\" {\n  value = azurerm_kubernetes_cluster.aks.kube_config_raw\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}",
+                "changed_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"subnet_id\" {\n  description = \"The ID of the subnet where AKS will be deployed\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "resource \"azurerm_kubernetes_cluster\" \"aks\" {\n  name                = var.aks_cluster_name\n  location            = var.location\n  resource_group_name = var.resource_group_name\n  dns_prefix          = var.aks_cluster_name\n\n  default_node_pool {\n    name       = \"default\"\n    node_count = 1\n    vm_size    = \"Standard_DS2_v2\"\n  }\n\n  identity {\n    type = \"SystemAssigned\"\n  }\n\n  network_profile {\n    network_plugin = \"azure\"\n  }\n}",
+                "changed_snippet": "resource \"azurerm_kubernetes_cluster\" \"aks\" {\n  name                = var.aks_cluster_name\n  location            = var.location\n  resource_group_name = var.resource_group_name\n  dns_prefix          = var.aks_cluster_name\n\n  default_node_pool {\n    name       = \"default\"\n    node_count = 1\n    vm_size    = \"Standard_DS2_v2\"\n  }\n\n  identity {\n    type = \"SystemAssigned\"\n  }\n\n  network_profile {\n    network_plugin = \"azure\"\n  }\n\n  addon_profile {\n    ingress_application_gateway {\n      enabled = true\n      subnet_id = var.subnet_id\n    }\n  }\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/application_gateway/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_application_gateway\" \"appgw\" {\n  name                = var.application_gateway_name\n  location            = var.location\n  resource_group_name = var.resource_group_name\n\n  sku {\n    name     = \"Standard_v2\"\n    tier     = \"Standard_v2\"\n    capacity = 2\n  }\n\n  gateway_ip_configuration {\n    name      = \"my-gateway-ip-configuration\"\n    subnet_id = var.subnet_id\n  }\n\n  frontend_port {\n    name = \"frontendPort\"\n    port = 80\n  }\n\n  frontend_ip_configuration {\n    name                 = \"my-frontend-ip-configuration\"\n    public_ip_address_id = azurerm_public_ip.appgw_public_ip.id\n  }\n\n  backend_address_pool {\n    name = \"my-backend-address-pool\"\n  }\n\n  backend_http_settings {\n    name                  = \"my-backend-http-settings\"\n    cookie_based_affinity = \"Disabled\"\n    path                  = \"/\"\n    port                  = 80\n    protocol              = \"Http\"\n    request_timeout       = 1\n  }\n\n  http_listener {\n    name                           = \"my-listener\"\n    frontend_ip_configuration_name = \"my-frontend-ip-configuration\"\n    frontend_port_name             = \"frontendPort\"\n    protocol                       = \"Http\"\n  }\n\n  request_routing_rule {\n    name                       = \"rulename\"\n    rule_type                  = \"Basic\"\n    http_listener_name         = \"my-listener\"\n    backend_address_pool_name  = \"my-backend-address-pool\"\n    backend_http_settings_name = \"my-backend-http-settings\"\n  }\n\n  tags = {\n    environment = \"Production\"\n  }\n}"
+              },
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_public_ip\" \"appgw_public_ip\" {\n  name                = \"example-appgw-public-ip\"\n  location            = var.location\n  resource_group_name = var.resource_group_name\n  allocation_method   = \"Dynamic\"\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/application_gateway/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where the Application Gateway will be deployed\"\n  type        = string\n}\n\nvariable \"application_gateway_name\" {\n  description = \"The name of the Application Gateway\"\n  type        = string\n}\n\nvariable \"subnet_id\" {\n  description = \"The ID of the subnet where the Application Gateway will be deployed\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/application_gateway/outputs.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "output \"id\" {\n  value = azurerm_application_gateway.appgw.id\n}"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "task_id": "vpn_gateway",
+    "outputs": [
+      {
+        "file_to_change": [
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "module \"aks\" {\n  source              = \"./modules/aks\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  aks_cluster_name    = var.aks_cluster_name\n}\n\nmodule \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n\nmodule \"vpn_gateway\" {\n  source              = \"./modules/vpn_gateway\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  vpn_gateway_name    = var.vpn_gateway_name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"vpn_gateway_name\" {\n  description = \"The name of the VPN Gateway\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}",
+                "changed_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}\n\noutput \"vpn_gateway_name\" {\n  value = module.vpn_gateway.vpn_gateway_name\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"vpn_gateway_name\" {\n  description = \"The name of the VPN Gateway\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "module \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}",
+                "changed_snippet": "module \"keyvault\" {\n  source              = \"./modules/keyvault\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  key_vault_name      = var.key_vault_name\n}\n\nmodule \"vpngateway\" {\n  source              = \"./modules/vpngateway\"\n  resource_group_name = azurerm_resource_group.main.name\n  location            = azurerm_resource_group.main.location\n  vpn_gateway_name    = var.vpn_gateway_name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}",
+                "changed_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}\n\noutput \"vpn_gateway_name\" {\n  value = module.vpngateway.vpn_gateway_name\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"aks_cluster_name\" {\n  value = azurerm_kubernetes_cluster.aks.name\n}",
+                "changed_snippet": "output \"aks_cluster_name\" {\n  value = azurerm_kubernetes_cluster.aks.name\n}\n\noutput \"vpn_gateway_public_ip\" {\n  value = azurerm_public_ip.vpn_gateway_ip.address\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/vpngateway/variables.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "variable \"resource_group_name\" {\n  description = \"The name of the resource group\"\n  type        = string\n}\n\nvariable \"location\" {\n  description = \"The Azure location where the VPN Gateway will be deployed\"\n  type        = string\n}\n\nvariable \"vpn_gateway_name\" {\n  description = \"The name of the VPN Gateway\"\n  type        = string\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/vpngateway/main.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "resource \"azurerm_public_ip\" \"vpn_gateway_ip\" {\n  name                = \"${var.vpn_gateway_name}_ip\"\n  location            = var.location\n  resource_group_name = var.resource_group_name\n  allocation_method   = \"Dynamic\"\n}\n\nresource \"azurerm_virtual_network_gateway\" \"vpn_gateway\" {\n  name                = var.vpn_gateway_name\n  location            = var.location\n  resource_group_name = var.resource_group_name\n\n  ip_configuration {\n    name                          = \"vnetGatewayConfig\"\n    public_ip_address_id          = azurerm_public_ip.vpn_gateway_ip.id\n    private_ip_address_allocation = \"Dynamic\"\n    subnet_id                     = azurerm_subnet.subnet.id\n  }\n\n  vpn_type = \"RouteBased\"\n  gateway_type = \"Vpn\"\n  sku = \"VpnGw1\"\n\n  depends_on = [azurerm_public_ip.vpn_gateway_ip]\n}\n\nresource \"azurerm_subnet\" \"subnet\" {\n  name                 = \"GatewaySubnet\"\n  resource_group_name  = var.resource_group_name\n  virtual_network_name = \"example_vnet\" # Change this as needed\n  address_prefixes     = [\"10.0.1.0/24\"] # Change this as needed\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/vpngateway/outputs.tf",
+            "mode": "create",
+            "changes": [
+              {
+                "original_snippet": "",
+                "changed_snippet": "output \"vpn_gateway_name\" {\n  value = azurerm_virtual_network_gateway.vpn_gateway.name\n}\n\noutput \"vpn_gateway_ip\" {\n  value = azurerm_public_ip.vpn_gateway_ip.address\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}",
+                "changed_snippet": "variable \"aks_cluster_name\" {\n  description = \"The name of the AKS cluster\"\n  type        = string\n}\n\nvariable \"key_vault_name\" {\n  description = \"The name of the Key Vault\"\n  type        = string\n}\n\nvariable \"vpn_gateway_name\" {\n  description = \"The name of the VPN Gateway\"\n  type        = string\n}\n\nvariable \"vpn_gateway_sku\" {\n  description = \"The SKU tier of the VPN Gateway\"\n  type        = string\n  default     = \"VpnGw1\"\n}\n\nvariable \"vpn_gateway_generation\" {\n  description = \"The generation of the VPN Gateway\"\n  type        = string\n  default     = \"Generation1\"\n}\n\nvariable \"address_space\" {\n  description = \"The address space for the virtual network\"\n  type        = list(string)\n}\n\nvariable \"subnet_prefixes\" {\n  description = \"The list of subnet prefixes\"\n  type        = list(string)\n}\n\nvariable \"subnet_names\" {\n  description = \"The list of subnet names\"\n  type        = list(string)\n}\n\nvariable \"public_ip_name\" {\n  description = \"The name of the public IP address\"\n  type        = string\n  default     = \"vpnPublicIP\"\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "resource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}",
+                "changed_snippet": "resource \"azurerm_resource_group\" \"main\" {\n  name     = var.resource_group_name\n  location = var.location\n}\n\nresource \"azurerm_virtual_network\" \"vnet\" {\n  name                = \"example-vnet\"\n  address_space       = var.address_space\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n}\n\nresource \"azurerm_subnet\" \"subnets\" {\n  count                = length(var.subnet_prefixes)\n  name                 = var.subnet_names[count.index]\n  resource_group_name  = azurerm_resource_group.main.name\n  virtual_network_name = azurerm_virtual_network.vnet.name\n  address_prefixes     = [var.subnet_prefixes[count.index]]\n}\n\nresource \"azurerm_public_ip\" \"vpn_gateway_ip\" {\n  name                = var.public_ip_name\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  allocation_method   = \"Dynamic\"\n}\n\nresource \"azurerm_virtual_network_gateway\" \"vpn_gateway\" {\n  name                = var.vpn_gateway_name\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  type                = \"Vpn\"\n  vpn_type            = \"RouteBased\"\n  active_active       = false\n  enable_bgp          = false\n  sku                 = var.vpn_gateway_sku\n  generation          = var.vpn_gateway_generation\n  ip_configuration {\n    name                          = \"vnetGatewayConfig\"\n    public_ip_address_id         = azurerm_public_ip.vpn_gateway_ip.id\n    private_ip_address_allocation = \"Dynamic\"\n    subnet_id                    = element(azurerm_subnet.subnets.*.id, 0)\n  }\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}",
+                "changed_snippet": "output \"key_vault_name\" {\n  value = module.keyvault.key_vault_name\n}\n\noutput \"vpn_gateway_public_ip\" {\n  value = azurerm_public_ip.vpn_gateway_ip.ip_address\n}\n\noutput \"vpn_gateway_name\" {\n  value = azurerm_virtual_network_gateway.vpn_gateway.name\n}"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "task_id": "vault_aks",
+    "outputs": [
+      {
+        "file_to_change": [
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "  }\n\n  identity {\n    type = \"SystemAssigned\"\n  }",
+                "changed_snippet": "  }\n\n  identity {\n    type = \"SystemAssigned\"\n  }\n\n  role_based_access_control {\n    enabled = true\n  }"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/aks/outputs.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}",
+                "changed_snippet": "}\n\noutput \"aks_client_id\" {\n  value = azurerm_kubernetes_cluster.aks.kubelet_identity[0].client_id\n}"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/keyvault/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "}\n\nresource \"azurerm_key_vault_access_policy\" \"aks\" {\n  key_vault_id = azurerm_key_vault.keyvault.id\n  tenant_id    = data.azurerm_client_config.current.tenant_id\n  object_id    = var.aks_client_id\n\n  secret_permissions = [\n    \"get\",\n    \"list\"\n  ]\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/keyvault/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "}\n\nvariable \"aks_client_id\" {\n  description = \"The client ID of the AKS cluster\"\n  type        = string\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "}\n\nresource \"azurerm_kubernetes_cluster\" \"aks\" {\n  key_vault_id = module.keyvault.key_vault_id\n  aks_client_id = module.aks.aks_client_id\n}\n"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "resource \"azurerm_kubernetes_cluster\" \"aks\" {\n  name                = var.aks_cluster_name\n  location            = var.location\n  resource_group_name = var.resource_group_name\n  dns_prefix          = var.aks_cluster_name\n\n  default_node_pool {\n    name       = \"default\"\n    node_count = 1\n    vm_size    = \"Standard_DS2_v2\"\n  }\n\n  identity {\n    type = \"SystemAssigned\"\n  }\n\n  network_profile {\n    network_plugin = \"azure\"\n  }\n}",
+                "changed_snippet": "resource \"azurerm_kubernetes_cluster\" \"aks\" {\n  name                = var.aks_cluster_name\n  location            = var.location\n  resource_group_name = var.resource_group_name\n  dns_prefix          = var.aks_cluster_name\n\n  default_node_pool {\n    name       = \"default\"\n    node_count = 1\n    vm_size    = \"Standard_DS2_v2\"\n  }\n\n  identity {\n    type = \"SystemAssigned\"\n  }\n\n  network_profile {\n    network_plugin = \"azure\"\n  }\n\n  role_based_access_control {\n    enabled = true\n  }\n\n  addon_profile {\n    azure_keyvault_secrets_provider {\n      enabled = true\n    }\n  }\n}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "file_to_change": [
+          {
+            "file_path": "/modules/aks/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n\n  identity {\n    type = \"SystemAssigned\"\n  }",
+                "changed_snippet": "}\n\n  identity {\n    type = \"SystemAssigned\"\n  }\n\n  addon_profile {\n    azure_keyvault_secrets_provider {\n      enabled = true\n    }\n  }"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/keyvault/main.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "  }\n}\n",
+                "changed_snippet": "  }\n\n  resource \"azurerm_role_assignment\" \"aks_keyvault_access\" {\n    scope               = azurerm_key_vault.keyvault.id\n    role_definition_name = \"Key Vault Secrets User\"\n    principal_id        = var.aks_client_id\n  }\n}\n"
+              }
+            ]
+          },
+          {
+            "file_path": "/modules/keyvault/variables.tf",
+            "mode": "change",
+            "changes": [
+              {
+                "original_snippet": "}\n",
+                "changed_snippet": "}\n\nvariable \"aks_client_id\" {\n  description = \"The Client ID of the AKS cluster\"\n  type        = string\n}\n"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

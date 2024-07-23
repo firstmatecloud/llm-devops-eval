@@ -1,4 +1,4 @@
-# ✅ LLM testing repo for devops tasks
+# 🤖 LLM testing repo for devops tasks
 
 ## 🧪 Results
 
@@ -15,8 +15,9 @@ FirstMate uses tool calling and multiple prompting layers including code-plannin
 In production we use multiple retries after validating code using `terraform validate`, `docker build`etc. 
 In this case we disabled this feature to get fair insights in the capabilities.
 
+<br>
 
-## Used Test Cases
+## ✅ Used Test Cases
 
 All used test-cases can be found in the dataset repo.
 The prompts defined in these test-cases are used to generate 1 commit a infra repository.
@@ -24,19 +25,19 @@ We use our own example repos which are linked as git submodules in this repo in 
 
 Linked repo's:
 
-`example-terraform` : https://github.com/firstmatecloud/example-terraform
+➡️ `example-terraform` : https://github.com/firstmatecloud/example-terraform
 
 ## Evaluation Metrics
 
 We evaluate LLM generated commits in multiple ways.
 
-**Commit Creation:**  
+- **Commit Creation:**  
 Do the generated source snippets exist, so they can be correctly altered?
 
-**Executable:**  
+- **Executable:**  
 Use commands like `terraform validate` to validate code correctness.
 
-**ICE score:**  
+- **ICE score:**  
 Mean of the 'Usefullness' and 'Functional correctness' score described in this paper:
 https://arxiv.org/pdf/2304.14317
 The authors propose a way to use LLM models to evaluate code generation and prove the correlation with human-evaluated
