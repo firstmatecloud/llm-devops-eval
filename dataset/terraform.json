@@ -1,0 +1,65 @@
+[
+  {
+    "task_id": "add_sql_db",
+    "type": "terraform",
+    "source": "example-terraform",
+    "prompt": "Add an Azure SQL Database to the existing setup. Ensure it is placed in the same resource group and location as the AKS and Key Vault.",
+    "canonical_solution": "TODO"
+  },
+  {
+    "task_id": "blob_storage",
+    "type": "terraform",
+    "source": "example-terraform",
+    "prompt": "Create a static website hosted on Azure Blob Storage. Ensure it is accessible publicly and place it in the same resource group.",
+    "canonical_solution": "TODO"
+  },
+  {
+    "task_id": "log_analytics",
+    "type": "terraform",
+    "source": "example-terraform",
+    "prompt": "Integrate an Azure Log Analytics Workspace to monitor the AKS cluster.",
+    "canonical_solution": "TODO"
+  },
+  {
+    "task_id": "autoscaling",
+    "type": "terraform",
+    "source": "example-terraform",
+    "prompt": "Enable auto-scaling for the AKS cluster to automatically adjust the number of nodes based on CPU utilization.",
+    "canonical_solution": "TODO"
+  },
+  {
+    "task_id": "create_submodule",
+    "type": "terraform",
+    "source": "example-terraform",
+    "prompt": "Refactor the resource group creation into a separate submodule to promote reusability.",
+    "canonical_solution": "TODO"
+  },
+  {
+    "task_id": "virtual_network",
+    "type": "terraform",
+    "source": "example-terraform",
+    "prompt": "Add an Azure Virtual Network with three subnets: one for the AKS cluster, one for the Key Vault, and one for the SQL Database.",
+    "canonical_solution": "TODO"
+  },
+  {
+    "task_id": "azure_application_gw",
+    "type": "terraform",
+    "source": "example-terraform",
+    "prompt": "Integrate an Azure Application Gateway to manage traffic to the AKS cluster.",
+    "canonical_solution": "TODO"
+  },
+  {
+    "task_id": "vpn_gateway",
+    "type": "terraform",
+    "source": "example-terraform",
+    "prompt": "Deploy an Azure VPN Gateway for secure network traffic to the resources.",
+    "canonical_solution": "TODO"
+  },
+  {
+    "task_id": "vault_aks",
+    "type": "terraform",
+    "source": "example-terraform",
+    "prompt": "Configure Azure Key Vault to store and manage secrets for the AKS cluster, ensuring the AKS cluster can access these secrets securely.\n\n",
+    "canonical_solution": "TODO"
+  }
+]

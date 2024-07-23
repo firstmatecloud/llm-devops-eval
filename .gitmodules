@@ -1,0 +1,3 @@
+[submodule "code/example-terraform"]
+	path = code/example-terraform
+	url = https://github.com/firstmatecloud/example-terraform
