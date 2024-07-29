@@ -3,14 +3,14 @@
     "task_id": "add_sql_db",
     "type": "terraform",
     "source": "example-terraform",
-    "prompt": "Add an Azure SQL Database to the existing setup. Ensure it is placed in the same resource group and location as the AKS and Key Vault.",
+    "prompt": "Add an Azure SQL Database to the existing setup. Ensure it is available in the same network as the AKS so my service can connect.",
     "canonical_solution": "TODO"
   },
   {
     "task_id": "blob_storage",
     "type": "terraform",
     "source": "example-terraform",
-    "prompt": "Create a static website hosted on Azure Blob Storage. Ensure it is accessible publicly and place it in the same resource group.",
+    "prompt": "Create a public Azure Blob Storage to store public images served on my website. Ensure it is accessible publicly and place it in the same resource group.",
     "canonical_solution": "TODO"
   },
   {
@@ -24,14 +24,14 @@
     "task_id": "autoscaling",
     "type": "terraform",
     "source": "example-terraform",
-    "prompt": "Enable auto-scaling for the AKS cluster to automatically adjust the number of nodes based on CPU utilization.",
+    "prompt": "Enable auto-scaling for the AKS cluster to automatically adjust the number of nodes based on CPU utilization. Scale to a maximum of 10 nodes.",
     "canonical_solution": "TODO"
   },
   {
     "task_id": "create_submodule",
     "type": "terraform",
     "source": "example-terraform",
-    "prompt": "Refactor the resource group creation into a separate submodule to promote reusability.",
+    "prompt": "Refactor the resource group creation into a separate submodule to promote reusability. But keep in mind that the state should be updated accordingly when new files are created.",
     "canonical_solution": "TODO"
   },
   {
@@ -39,6 +39,13 @@
     "type": "terraform",
     "source": "example-terraform",
     "prompt": "Add an Azure Virtual Network with three subnets: one for the AKS cluster, one for the Key Vault, and one for the SQL Database.",
+    "canonical_solution": "TODO"
+  },
+  {
+    "task_id": "virtual_network",
+    "type": "terraform",
+    "source": "example-terraform",
+    "prompt": "Add policies to the VNet, so the aks can access the keyvault and the DB.",
     "canonical_solution": "TODO"
   },
   {
