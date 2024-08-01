@@ -7,13 +7,18 @@ from inference import run_ice_prompt, Changes
 def criteria_file_exists(changes: dict, test):
     exists = []
     for file in changes["file_to_change"]:
-        path = os.path.join("code", test["source"], file["file_path"][1:])
-        exists.append(os.path.exists(path))
+        fpath = file["file_path"][1:] if file["file_path"].startswith("/") else file["file_path"]
+        path = os.path.join("code", test["source"], fpath)
+        if file['mode'] != "create":
+            exists.append(os.path.exists(path))
+        else:
+            exists.append(not os.path.exists(path))
     return round(sum(exists) / (len(exists) + 10e-10), 3)
 
 
 def criteria_change(changes: dict, test):
     exists = []
+    file_changes = ""
     for file in changes["file_to_change"]:
         path = os.path.join("code", test["source"], file["file_path"][1:])
         content = ""
@@ -26,6 +31,7 @@ def criteria_change(changes: dict, test):
         if file["mode"] == "create" and os.path.exists(path):
             exists.append(False)
             continue
+        file_changes += f"--- {file['mode']} ---\n"
         if file["mode"] == "change":
             with open(path, "r") as fp:
                 content = fp.read()
@@ -92,6 +98,8 @@ class Score:
 def summarize_score(scores: list[Score]):
     criteria = {}
     for score in scores:
+        if not score:
+            continue
         for key, value in score.as_dict().items():
             if key not in criteria:
                 criteria[key] = [value]

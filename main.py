@@ -18,7 +18,7 @@ if sys.argv[1] == "generate":
         results.append({"task_id": test["task_id"], "outputs": outputs})
         prompt = create_prompt(test)
         for iteration in range(3):
-            changes = run_inference(sys.argv[2], prompt)
+            changes = run_inference(model, prompt)
             outputs.append(changes.model_dump())
             results[-1]["outputs"] = outputs
             save_to_file(model, results)

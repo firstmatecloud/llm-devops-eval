@@ -2,9 +2,12 @@ import os, json
 from glob import glob
 from pathlib import Path
 
+parent = Path(__file__).parent.resolve()
+
+
 def load_test_cases():
     test_cases = []
-    for file in glob("dataset/*.json"):
+    for file in glob(os.path.join(parent, "dataset", "*.json")):
         with open(file, "r") as fp:
             test_cases += json.load(fp)
     return test_cases
@@ -12,7 +15,7 @@ def load_test_cases():
 
 def get_results(model):
     model = model.split("/")[1]
-    assert os.path.exists(os.path.join("results", model + ".json"))
+    assert os.path.exists(os.path.join(parent, "results", model + ".json"))
     with open(os.path.join("results", model + ".json"), "r") as fp:
         results = json.load(fp)
     return results
@@ -24,7 +27,7 @@ def create_prompt(test_case):
 
 
 def save_to_file(model, result):
-    with open("results/" + model.split("/")[1] + ".json", "w") as fp:
+    with open(os.path.join(parent, "results", model.split("/")[1] + ".json"), "w") as fp:
         json.dump(result, fp)
 
 
